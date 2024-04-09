@@ -61,6 +61,7 @@ const getUniqueClassName = (() => {
     let className = ''
     while (getUniqueClassName.count > 0) {
       let mod = (getUniqueClassName.count - 1) % 52
+      console.log(className)
       className = String.fromCharCode(mod < 26 ? (97/*a*/ + mod) : (65/*A*/ + (mod - 26))) + className
       getUniqueClassName.count = Math.floor((getUniqueClassName.count - 1) / 52)
     }
@@ -68,7 +69,7 @@ const getUniqueClassName = (() => {
     return className
 
   }
-  getUniqueClassName.count = 52
+  getUniqueClassName.count = 5200
   getUniqueClassName.reset = () => getUniqueClassName.count = 0
   return getUniqueClassName
 })()
