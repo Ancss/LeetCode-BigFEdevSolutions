@@ -107,51 +107,41 @@ type Command = {
   $set?: any
   $apply?: (arg: any) => any
   $merge?: object
-  [key:number]:Command
 }
-function update(data: object, command: Command): void {
+  & {
+    [key: number | string]: any
+  }
+function update(data: any, command: Command): void {
 
-  const recursive = (data, command, parentKey = '', parentData = {}) => {
+  const recursive = (data, command) => {
     for (let [key, value] of Object.entries(command)) {
       if (key === '$push') {
-        data = myCommand[key](data, value)
+        return [...data, ...value as []]
       } else if (key === '$set') {
-        data = { ...data, ...myCommand[key](parentData, parentKey, value) }
+        return value
       } else if (key === '$apply') {
-        data[key] = myCommand[key](value, data[key])
+        return (value as <T>(v: T) => {})(data)
       } else if (key === '$merge') {
-        data = { ...data, ...myCommand[key](key, value) }
-
+        console.log(data)
+        if (typeof data === 'undefined') {
+          throw Error("bad merge");
+        }
+        return { ...data, ...value as Object }
       }
-      else if (typeof data[key] === 'object') {
-        recursive(data[key], command[key], key, data)
+      else {
+        if (Array.isArray(data)) {
+          data[key] = recursive(data[key], command[key])
+          return data
+        } else {
+          return {
+            ...data,
+            [key]: recursive(data[key], command[key])
+          }
+        }
       }
     }
     return data
   }
   return recursive(data, command)
 }
-const myCommand = {
-  $push(data, ...args) {
-    data.push(...args.flat())
-    return data
-  },
-  $set(data, key, value) {
-    if (Array.isArray(data)) {
-      data[key] = value
-
-    } else {
-      data = {
-        ...data,
-        key: value
-      }
-    }
-  },
-  $apply(fn, v) {
-    return fn(v)
-  },
-  $merge(key, value) {
-    return { [key]: value }
-
-  }
-}
+update({ a: 1 }, { a: { $merge: { c: 3 } } })
