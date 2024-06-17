@@ -15,6 +15,6 @@ function jump(nums: number[]): number {
   return jumps;
 }
 
-const nums1 = [3, 13, 1, 1, 4];
+const nums1 = [31, 13, 1, 1, 4];
 console.log(jump(nums1));
 export {};
