@@ -11,7 +11,7 @@ function permute(nums: number[]): number[][] {
   }
 
   if (nums.length >= 3) {
-    let permutations = [];
+    let permutations: number[][] = [];
 
     for (let i = 0; i < nums.length; i++) {
       const numsCopy = [...nums];
@@ -30,3 +30,4 @@ function permute(nums: number[]): number[][] {
 
   return [[]];
 }
+console.log(permute([1, 2, 3])); // [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
